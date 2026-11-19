@@ -9,7 +9,8 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="apple-mobile-web-app-title" content="AKC Finanças">
 <link rel="manifest" href="manifest.json">
-<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%20512%20512%27%3E%3Crect%20width%3D%27512%27%20height%3D%27512%27%20fill%3D%27%23000%27%2F%3E%3Ccircle%20cx%3D%27256%27%20cy%3D%27256%27%20r%3D%27165%27%20fill%3D%27none%27%20stroke%3D%27%23F5F5F5%27%20stroke-width%3D%2714%27%2F%3E%3Ctext%20x%3D%27256%27%20y%3D%27304%27%20font-family%3D%27Arial%2Csans-serif%27%20font-weight%3D%27700%27%20font-size%3D%27130%27%20text-anchor%3D%27middle%27%20fill%3D%27%23F5F5F5%27%3ER%24%3C%2Ftext%3E%3C%2Fsvg%3E">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="icon" href="icon-192.png">
 <title>AKC Finanças</title>
 <style>
 :root{--neg:#FFA0A0;--bg:#000;--fg:#F5F5F5;--surf:#1A1A1A;--line:#2A2A2A;--line2:#3D3D3D;--mut:#A6A6A6;--bar:#4A4A4A;--abg:#2B1D0A;--abd:#7A5316;--atx:#F7D9A8;--c1:#7FB2E5;--c2:#F0A440;--c3:#4C7FAE;--c4:#A8A8A8;--c5:#CFE0F0;--c6:#D9B27C}
@@ -88,17 +89,28 @@ h2{font-size:13px;color:var(--mut);font-weight:600;margin:24px 0 8px}
 .loading{color:var(--mut);padding:40px 0;text-align:center}
 .link{color:var(--mut);font-size:13px;text-decoration:underline}
 .chk{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--mut)}
-.chk input{width:20px;height:20px;padding:0}
+.chk{position:relative;cursor:pointer}
+.chk input{position:absolute;opacity:0;width:1px;height:1px;padding:0;border:0}
+.chk .bx{width:24px;height:24px;border-radius:8px;border:2px solid var(--line2);flex:0 0 24px;display:flex;align-items:center;justify-content:center}
+.chk input:checked+.bx{background:var(--fg);border-color:var(--fg)}
+.chk input:checked+.bx::after{content:"";width:6px;height:11px;border:solid var(--bg);border-width:0 2.5px 2.5px 0;transform:rotate(45deg) translate(-1px,-1px)}
+.brand{display:flex;align-items:center;gap:12px}
+.brand .lg{height:92px;width:auto}
+html.light .brand .lg{filter:invert(1)}
+.brand .cif{font-size:30px;font-weight:700;color:var(--mut);line-height:1}
+.xdel{width:38px;height:38px;flex:0 0 38px}
 </style>
 </head>
 <body>
 <div id="app"></div>
 <div id="tabs"></div>
 <div id="ov"></div>
+<div id="cf"></div>
 <div id="toast"></div>
 <script>
 'use strict';
 const API = 'https://script.google.com/macros/s/AKfycbzFPsnspOiyKDMIS2QAYxfZlCdheqFNtHk3SVKMh9w7Iaxkpqqo43N4o-jwa5WM3oDh/exec';
+const LOGO = 'data:image/png;base64,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';
 const $ = s => document.querySelector(s);
 function ls(k, v) { try { if (v === undefined) return localStorage.getItem('akc_' + k); if (v === null) localStorage.removeItem('akc_' + k); else localStorage.setItem('akc_' + k, v); } catch (e) { return null; } }
 const S = { tela: 'inicio', sub: null, hide: ls('hide') === '1', tema: ls('tema') || 'dark', token: ls('tok') || '', init: null, d: null, ym: null, ymA: null, L: null, open: {}, busy: false };
@@ -133,7 +145,7 @@ const IC = {
   analises: '<path d="M5 20V10M12 20V4M19 20v-7"/>', mais: '<circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/>',
   olho: '<path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
   olhoX: '<path d="M3 3l18 18M10.6 6.1A9.8 9.8 0 0112 6c6 0 10 6 10 6a17 17 0 01-3.2 3.7M6.6 7.6A16 16 0 002 12s4 7 10 7c1.7 0 3.2-.4 4.5-1M9.9 9.9a3 3 0 004.2 4.2"/>',
-  esq: '<path d="M15 5l-7 7 7 7"/>', dir: '<path d="M9 5l7 7-7 7"/>'
+  lixo: '<path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/>', esq: '<path d="M15 5l-7 7 7 7"/>', dir: '<path d="M9 5l7 7-7 7"/>'
 };
 const ico = n => '<svg viewBox="0 0 24 24">' + IC[n] + '</svg>';
 
@@ -156,6 +168,7 @@ function render() {
   applyTheme();
   const A = $('#app'), T = $('#tabs');
   if (S.tela === 'login') { T.innerHTML = ''; A.innerHTML = vLogin(); return; }
+  if (S.tela === 'lock') { T.innerHTML = ''; A.innerHTML = vLock(); return; }
   T.innerHTML = '<div class="tabs"><div>' + [['inicio', 'Início'], ['extrato', 'Extrato']].map(t => tb(t[0], t[1])).join('') +
     '<button class="plus" data-a="lancar" aria-label="Lançar">' + ico('plus') + '</button>' + [['analises', 'Análises'], ['mais', 'Mais']].map(t => tb(t[0], t[1])).join('') + '</div></div>';
   if (!S.d) { A.innerHTML = '<div class="loading">Carregando…</div>'; return; }
@@ -164,9 +177,11 @@ function render() {
 const tb = (k, l) => '<button data-a="tab" data-v="' + k + '" class="' + (S.tela === k ? 'on' : '') + '">' + ico(k) + l + '</button>';
 const eye = () => '<button class="icobtn" data-a="eye" aria-label="Ocultar valores">' + ico(S.hide ? 'olhoX' : 'olho') + '</button>';
 
+const vBrand = () => '<div class="brand"><img class="lg" src="' + LOGO + '" alt=""><span class="cif">$</span></div>';
+function vLock() { return '<div class="center" style="align-items:center;text-align:center">' + vBrand() + '<div class="sub">Toque para desbloquear com a biometria do celular.</div><button class="btn" data-a="bio">Desbloquear</button><button class="link" data-a="usarsenha">Usar a senha</button></div>'; }
 function vLogin() {
-  return '<div class="center"><div><div class="logo">AKC Finanças</div><div class="sub">Digite a senha do app para entrar.</div></div>' +
-    '<input id="pw" type="password" placeholder="Senha" autocomplete="current-password"><label class="chk"><input id="rem" type="checkbox" checked> Manter conectado neste aparelho</label>' +
+  return '<div class="center"><div>' + vBrand() + '<div class="logo" style="margin-top:16px">AKC Finanças</div><div class="sub">Digite a senha do app para entrar.</div></div>' +
+    '<input id="pw" type="password" placeholder="Senha" autocomplete="current-password"><label class="chk"><input id="rem" type="checkbox" checked><span class="bx"></span>Manter conectado neste aparelho</label>' +
     '<div class="err" id="lerr"></div><button class="btn" data-a="entrar">Entrar</button></div>';
 }
 
@@ -202,7 +217,7 @@ function vExtrato() {
     if (r.data !== dia) { dia = r.data; const dt = new Date(r.data + 'T12:00:00'); h += '<div class="dia">' + DSEM[dt.getDay()] + ', ' + dm(r.data) + '</div>'; }
     const sinal = r.tipo === 'Receita' ? '+' : r.tipo === 'Despesa' ? '−' : '';
     const sub = r.tipo === 'Interno' ? 'Transferência · ' + r.banco + ' — ' + r.conta : r.grupo + ' › ' + r.cat + ' · ' + r.conta + (r.parcela ? ' · ' + r.parcela : '');
-    h += '<button class="row" data-a="editar" data-v="' + r.id + '" style="border-bottom:1px solid var(--line)"><div class="l"><div class="t">' + esc(r.desc) + '</div><div class="s">' + esc(sub) + '</div></div><div class="v ' + (r.tipo === 'Interno' ? 'm' : '') + '">' + sinal + money(Math.abs(r.valor)) + '</div></button>';
+    h += '<div class="row" style="padding:0;gap:0"><button class="row" data-a="editar" data-v="' + r.id + '" style="border:0"><div class="l"><div class="t">' + esc(r.desc) + '</div><div class="s">' + esc(sub) + '</div></div><div class="v ' + (r.tipo === 'Interno' ? 'm' : '') + '">' + sinal + money(Math.abs(r.valor)) + '</div></button><button class="icobtn xdel" data-a="xdel" data-v="' + r.id + '" aria-label="Excluir">' + ico('lixo') + '</button></div>';
   });
   return h;
 }
@@ -229,6 +244,7 @@ function vMais() {
   if (!sub) {
     const it = [['resumo', 'Resumo por conta', 'saldo de cada conta e conferência com o banco'], ['cats', 'Categorias', 'grupos e categorias'], ['contas', 'Contas e cofrinhos', 'adicionar ou remover'], ['fech', 'Fechamento das faturas', 'dia padrão e ajuste por mês'], ['fixos', 'Contas fixas', 'valores mensais previstos'], ['base', 'Base do Pode gastar', 'valor base e média de fatura']];
     return '<div class="top"><h1>Mais</h1>' + eye() + '</div><div class="card">' + it.map(x => '<button class="row" data-a="sub" data-v="' + x[0] + '"><div class="l"><div class="t">' + x[1] + '</div><div class="s">' + x[2] + '</div></div>' + ico('dir').replace('<svg', '<svg width="18" height="18" style="stroke:var(--mut);fill:none;stroke-width:1.8"') + '</button>').join('') +
+      (S.inst ? '<button class="row" data-a="instalar"><div class="l"><div class="t">Instalar o app</div><div class="s">adicionar à tela inicial como aplicativo</div></div></button>' : '') + '<button class="row" data-a="biotog"><div class="l"><div class="t">Desbloqueio por biometria</div><div class="s">' + (ls('bio') ? 'ativado, toque para desativar' : 'desativado, toque para ativar') + '</div></div></button>' +
       '<button class="row" data-a="tema"><div class="l"><div class="t">Tema</div><div class="s">' + (S.tema === 'dark' ? 'escuro' : 'claro') + ', toque para trocar</div></div></button></div>' +
       '<button class="btn sec" data-a="sair" style="margin-top:20px">Sair</button><div class="sub" style="text-align:center;margin-top:16px">AKC Finanças</div>';
   }
@@ -288,7 +304,7 @@ function fixCat() {
 }
 function drawL() {
   const L = S.L, edit = !!L.id, tr = L.tipo === 'Transferencia';
-  let h = '<h3>' + (edit ? 'Editar lançamento' : 'Novo lançamento') + '</h3>';
+  let h = edit ? '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px"><h3 style="margin:0">Editar lançamento</h3><button class="link neg" data-a="lexcluir" style="font-size:15px">Excluir</button></div>' : '<h3>Novo lançamento</h3>';
   if (!edit) {
     h += '<div class="seg">' + [['Despesa', 'Despesa'], ['Receita', 'Receita'], ['Transferencia', 'Transferência']].map(t => '<button data-a="ltipo" data-v="' + t[0] + '" class="' + (L.tipo === t[0] ? 'on' : '') + '">' + t[1] + '</button>').join('') + '</div>';
     if (L.tipo === 'Despesa' && S.init.atalhos.length) h += '<div class="chips">' + S.init.atalhos.map((a, i) => '<button data-a="atalho" data-v="' + i + '">' + esc(a.desc) + '</button>').join('') + '</div>';
@@ -353,7 +369,7 @@ document.addEventListener('click', async ev => {
   if (a === 'entrar') {
     const pw = $('#pw').value, rem = $('#rem').checked; if (!pw) return;
     t.disabled = true; t.textContent = 'Entrando…'; S.token = pw;
-    try { await api('login'); S.init = await api('init'); if (rem) ls('tok', pw); else ls('tok', null); S.tela = 'inicio'; load(); }
+    try { await api('login'); S.init = await api('init'); if (rem || ls('bio')) ls('tok', pw); else ls('tok', null); S.tela = 'inicio'; load(); }
     catch (e) { S.token = ''; if (S.tela === 'login') { const er = $('#lerr'); if (er) er.textContent = e.message; t.disabled = false; t.textContent = 'Entrar'; } }
     return;
   }
@@ -362,16 +378,21 @@ document.addEventListener('click', async ev => {
   if (a === 'atalho') return preencher(S.init.atalhos[+v], true);
   if (a === 'sug') return preencher(S.init.sug[+v], false);
   if (a === 'lsalvar') return salvarL(t);
-  if (a === 'lexcluir') {
-    if (!confirm('Excluir este lançamento?')) return;
-    try { await api('excluir', { ids: [S.L.id] }); closeSheet(); toast('Excluído.'); reload(); } catch (e) { toast(e.message); } return;
+  if (a === 'lexcluir') return delItem(S.itens.find(x => x.id === S.L.id));
+  if (a === 'xdel') return delItem(S.itens.find(x => x.id === +v));
+  if (a === 'bio') return tentaBio();
+  if (a === 'usarsenha') { ls('bio', null); ls('tok', null); S.token = ''; S.tela = 'login'; return render(); }
+  if (a === 'instalar') { if (S.inst) { S.inst.prompt(); S.inst = null; render(); } return; }
+  if (a === 'biotog') {
+    if (ls('bio')) { ls('bio', null); toast('Biometria desativada.'); return render(); }
+    try { await ativarBio(); toast('Biometria ativada.'); } catch (e) { toast('Não foi possível ativar a biometria neste aparelho.'); } return render();
   }
   if (a === 'editar') {
     const r = S.itens.find(x => x.id === +v); if (!r) return;
     if (r.tipo === 'Interno') {
       const par = S.itens.find(x => x.id !== r.id && x.tipo === 'Interno' && x.data === r.data && x.desc === r.desc && Math.abs(x.valor + r.valor) < 0.005);
       openSheet('<h3>Transferência</h3><div class="sub" style="margin-bottom:14px">' + esc(r.desc) + ' · ' + money(Math.abs(r.valor)) + ' em ' + dm(r.data) + '. Transferências só podem ser excluídas (as duas pontas).</div><button class="btn del" id="xt" style="margin:0">Excluir transferência</button><button class="btn sec" data-a="ovclose2">Cancelar</button>');
-      $('#xt').onclick = async () => { if (!confirm('Excluir esta transferência?')) return; try { await api('excluir', { ids: par ? [r.id, par.id] : [r.id] }); closeSheet(); toast('Excluída.'); reload(); } catch (e) { toast(e.message); } };
+      $('#xt').onclick = () => delItem(r);
       return;
     }
     return lancar(r);
@@ -392,9 +413,9 @@ document.addEventListener('click', async ev => {
     const gr = [...new Set(S.d.categorias.map(c => c.grupo))];
     return formSheet('Nova categoria', [{ id: 'g', l: 'Grupo (escolha ou digite um novo abaixo)', sel: gr.map(g => [g, g]).concat([['__novo', 'Novo grupo…']]), v: gr[0] }, { id: 'n', l: 'Nome do novo grupo (só se escolheu "Novo grupo")', p: '' }, { id: 'c', l: 'Categoria' }, { id: 'nat', l: 'Tipo', sel: [['Despesa', 'Despesa'], ['Receita', 'Receita']], v: 'Despesa' }], 'Adicionar', async x => { const g = x.g === '__novo' ? x.n : x.g; await api('catAdd', { grupo: g, cat: x.c, nat: x.nat }); api('init').then(i => S.init = i); });
   }
-  if (a === 'catdel') { if (!confirm('Remover a categoria ' + t.dataset.c + '? Lançamentos antigos continuam como estão.')) return; try { await api('catDel', { grupo: t.dataset.g, cat: t.dataset.c }); api('init').then(i => S.init = i); reload(); } catch (e) { toast(e.message); } return; }
+  if (a === 'catdel') { if (!await askConfirm('Remover a categoria ' + t.dataset.c + '? Lançamentos antigos continuam como estão.')) return; try { await api('catDel', { grupo: t.dataset.g, cat: t.dataset.c }); api('init').then(i => S.init = i); reload(); } catch (e) { toast(e.message); } return; }
   if (a === 'contaadd') return formSheet('Nova conta', [{ id: 'b', l: 'Banco', v: 'Banco do Brasil' }, { id: 'c', l: 'Nome da conta / cofrinho' }, { id: 't', l: 'Tipo', sel: tiposConta, v: 'Cofrinho' }, { id: 'd', l: 'Dia de fechamento (só cartão)', num: 1 }], 'Adicionar', async x => { await api('contaAdd', { banco: x.b, conta: x.c, tipo: x.t, dia: x.d ? parseInt(x.d, 10) : '' }); api('init').then(i => S.init = i); });
-  if (a === 'contadel') { if (!confirm('Remover a conta ' + t.dataset.c + '?')) return; try { await api('contaDel', { banco: t.dataset.b, conta: t.dataset.c }); api('init').then(i => S.init = i); reload(); } catch (e) { toast(e.message); } return; }
+  if (a === 'contadel') { if (!await askConfirm('Remover a conta ' + t.dataset.c + '?')) return; try { await api('contaDel', { banco: t.dataset.b, conta: t.dataset.c }); api('init').then(i => S.init = i); reload(); } catch (e) { toast(e.message); } return; }
   if (a === 'fechpad') { const c = S.d.contas.filter(x => x.ehCartao)[+v]; return formSheet('Dia padrão de fechamento', [{ id: 'd', l: c.banco + ' — ' + c.conta + ' (dia do mês)', v: c.dia || '', num: 1 }], 'Salvar', async x => { await api('fechSet', { banco: c.banco, conta: c.conta, dia: x.d }); }); }
   if (a === 'fechmes') {
     const c = S.d.contas.filter(x => x.ehCartao)[+v]; S.fmc = c; const ym = t.dataset.ym, k = c.banco + '|' + c.conta + '|' + ym;
@@ -417,7 +438,7 @@ document.addEventListener('click', async ev => {
       if (title === 'Saldo no banco') { const lab = document.querySelector('.f label').textContent; const c = S.d.find(x => lab.indexOf(x.banco + ' — ' + x.conta) === 0); if (c) ls('conf_' + c.banco + '|' + c.conta, null); closeSheet(); render(); return; }
       if (title === 'Fechamento em um mês') { const m = $('#g_m').value; await api('fechSet', { banco: S.fmc.banco, conta: S.fmc.conta, ym: m, dia: '' }); closeSheet(); reload(); return; }
     }
-    if (id === 'gx') { if (!confirm('Excluir este fixo?')) return; const nome = $('#g_n').value; const f = S.d.fixos.find(x => x.nome === nome); if (f) { await api('fixoDel', { linha: f.linha, nome: f.nome }); } closeSheet(); reload(); }
+    if (id === 'gx') { if (!await askConfirm('Excluir este fixo?')) return; const nome = $('#g_n').value; const f = S.d.fixos.find(x => x.nome === nome); if (f) { await api('fixoDel', { linha: f.linha, nome: f.nome }); } closeSheet(); reload(); }
   } catch (e) { toast(e.message); }
 });
 /* sugestões enquanto digita a descrição + grupo → categorias */
@@ -439,9 +460,49 @@ document.addEventListener('keydown', ev => { if (ev.key === 'Enter' && ev.target
   try { const c = document.createElement('canvas'); c.width = c.height = 180; const x = c.getContext('2d'); x.fillStyle = '#000'; x.fillRect(0, 0, 180, 180); x.strokeStyle = '#F5F5F5'; x.lineWidth = 5; x.beginPath(); x.arc(90, 90, 58, 0, 7); x.stroke(); x.fillStyle = '#F5F5F5'; x.font = 'bold 46px Arial'; x.textAlign = 'center'; x.fillText('R$', 90, 106); const l = document.createElement('link'); l.rel = 'apple-touch-icon'; l.href = c.toDataURL('image/png'); document.head.appendChild(l); } catch (e) { }
   applyTheme();
   if (!S.token) { S.tela = 'login'; return render(); }
+  if (ls('bio')) { S.tela = 'lock'; render(); tentaBio(); return; }
+  await abrir();
+})();
+
+async function abrir() {
   try { S.init = await api('init'); S.tela = 'inicio'; load(); }
   catch (e) { if (S.token) { $('#app').innerHTML = '<div class="loading">' + esc(e.message) + '<br><br><button class="btn sec" onclick="location.reload()">Tentar de novo</button></div>'; } }
-})();
+}
+const b64 = u => btoa(String.fromCharCode.apply(null, new Uint8Array(u))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+const unb64 = s => Uint8Array.from(atob(s.replace(/-/g, '+').replace(/_/g, '/')), c => c.charCodeAt(0));
+async function ativarBio() {
+  if (!window.PublicKeyCredential) throw new Error('sem suporte');
+  const cred = await navigator.credentials.create({ publicKey: { challenge: crypto.getRandomValues(new Uint8Array(32)), rp: { name: 'AKC Finanças', id: location.hostname }, user: { id: crypto.getRandomValues(new Uint8Array(16)), name: 'akc', displayName: 'AKC Finanças' }, pubKeyCredParams: [{ type: 'public-key', alg: -7 }, { type: 'public-key', alg: -257 }], authenticatorSelection: { authenticatorAttachment: 'platform', userVerification: 'required' }, timeout: 60000 } });
+  ls('bio', b64(cred.rawId)); ls('tok', S.token);
+}
+async function tentaBio() {
+  try {
+    await navigator.credentials.get({ publicKey: { challenge: crypto.getRandomValues(new Uint8Array(32)), allowCredentials: [{ type: 'public-key', id: unb64(ls('bio')) }], userVerification: 'required', timeout: 60000 } });
+    await abrir();
+  } catch (e) { toast('Não foi possível desbloquear. Toque em Desbloquear ou use a senha.'); }
+}
+let hiddenAt = 0;
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) { hiddenAt = Date.now(); return; }
+  if (ls('bio') && S.token && hiddenAt && Date.now() - hiddenAt > 60000 && S.tela !== 'lock' && S.tela !== 'login') { S.tela = 'lock'; closeSheet(); render(); tentaBio(); }
+});
+window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); S.inst = e; });
+function askConfirm(msg) {
+  return new Promise(res => {
+    const o = document.getElementById('cf');
+    o.innerHTML = '<div class="ov" style="z-index:40;align-items:center;padding:20px"><div class="sheet" style="border-radius:20px;max-width:360px;padding-bottom:18px"><h3>Confirmar</h3><div class="sub" style="font-size:15px;margin-bottom:16px">' + esc(msg) + '</div><button class="btn" id="cf_ok" style="background:var(--neg);color:var(--bg)">Sim, excluir</button><button class="btn sec" id="cf_no">Cancelar</button></div></div>';
+    const f = v => { o.innerHTML = ''; res(v); };
+    document.getElementById('cf_ok').onclick = () => f(true); document.getElementById('cf_no').onclick = () => f(false);
+  });
+}
+async function delItem(r) {
+  if (!r) return;
+  const msg = r.tipo === 'Interno' ? 'Excluir esta transferência? As duas pontas serão removidas.' : 'Excluir "' + r.desc + '" (' + money(Math.abs(r.valor)) + ')?' + (r.parcela ? ' Só esta parcela será excluída.' : '');
+  if (!await askConfirm(msg)) return;
+  const ids = [r.id];
+  if (r.tipo === 'Interno') { const par = S.itens.find(x => x.id !== r.id && x.tipo === 'Interno' && x.data === r.data && x.desc === r.desc && Math.abs(x.valor + r.valor) < 0.005); if (par) ids.push(par.id); }
+  try { await api('excluir', { ids }); closeSheet(); toast('Excluído.'); reload(); } catch (e) { toast(e.message); }
+}
 </script>
 </body>
 </html>
