@@ -292,9 +292,8 @@ function vMais() {
     return back('Contas fixas') + '<div class="card">' + d.fixos.map(f => '<button class="row" data-a="fixo" data-v="' + f.linha + '"><div class="l"><div class="t">' + esc(f.nome) + '</div><div class="s">' + esc(f.banco + ' — ' + f.conta) + (f.dia ? ' · dia ' + f.dia : ' · sem dia') + '</div></div><div class="v">' + money(f.valor) + '</div></button>').join('') + '</div><button class="btn" style="margin-top:20px" data-a="fixo" data-v="0">Novo fixo</button>';
   }
   if (sub === 'base') {
-    return back('Base do Pode gastar') + '<div class="card"><button class="row" data-a="basecfg"><div class="l"><div class="t">Valor fixo</div><div class="s">usado quando a origem é valor fixo</div></div><div class="v">' + money(d.base.valor) + '</div></button>' +
-      '<button class="row" data-a="basecfg"><div class="l"><div class="t">Ajuste sobre o saldo</div><div class="s">somado ao saldo da conta corrente (saldo atual ' + money(d.base.saldo || 0) + ')</div></div><div class="v">' + money(d.base.ajuste || 0) + '</div></button>' +
-      '<button class="row" data-a="basecfg"><div class="l"><div class="t">Origem da base</div><div class="s">' + (d.base.tipo === 'saldo' ? 'saldo da conta corrente BB' : 'valor fixo') + ', toque para trocar</div></div></button>' +
+    return back('Base do Pode gastar') + '<div class="card"><button class="row" data-a="basefix"><div class="l"><div class="t">Valor fixo</div><div class="s">toque para editar (aceita conta)</div></div><div class="v">' + money(d.base.valor) + '</div></button>' +
+      '<div class="row"><div class="l"><div class="t">Origem da base</div><div class="s">valor usado no cálculo</div></div><select id="basesel" style="max-width:58%;background:var(--bg);color:inherit;border:1px solid var(--line);border-radius:10px;padding:10px;font-size:14px"><option value="fixo"' + (d.base.tipo === 'saldo' ? '' : ' selected') + '>Valor fixo · ' + money(d.base.valor) + '</option><option value="saldo"' + (d.base.tipo === 'saldo' ? ' selected' : '') + '>Saldo conta corrente BB · ' + money(d.base.saldo || 0) + '</option></select></div>' +
       '<button class="row" data-a="media"><div class="l"><div class="t">Média das faturas</div><div class="s">só informativo, não entra no cálculo</div></div><div class="v">' + money(d.media) + '</div></button></div>';
   }
   return '';
@@ -447,9 +446,10 @@ document.addEventListener('click', async ev => {
   if (a === 'basev') return formSheet('Valor base', [{ id: 'v', l: 'Base do Pode gastar (R$)', v: inpNum(S.d.base.valor), num: 1 }], 'Salvar', async x => { await api('baseSet', { valor: x.v }); });
   if (a === 'basetipo') { try { await api('baseSet', { tipo: S.d.base.tipo === 'saldo' ? 'fixo' : 'saldo' }); reload(); } catch (e) { toast(e.message); } return; }
   if (a === 'basea') return formSheet('Ajuste sobre o saldo', [{ id: 'v', l: 'Ajuste (R$) — use - para diminuir', v: String(S.d.base.ajuste || 0).replace('.', ',') }], 'Salvar', async x => { await api('baseSet', { ajuste: x.v }); });
-  if (a === 'basecfg') return formSheet('Base do Pode gastar', [{ id: 't', l: 'Origem da base', sel: [['fixo', 'Valor fixo'], ['saldo', 'Saldo da conta corrente BB']], v: S.d.base.tipo }, { id: 'f', l: 'Valor fixo (R$) — aceita conta, ex.: 3000-250', v: inpNum(S.d.base.valor) }, { id: 'a', l: 'Ajuste sobre o saldo (R$) — aceita conta', v: inpNum(S.d.base.ajuste || 0) }], 'Salvar', async x => { await api('baseSet', { tipo: x.t, valor: parseNum(x.f), ajuste: parseNum(x.a) }); });
+  if (a === 'basefix') return formSheet('Valor fixo da base', [{ id: 'v', l: 'Valor fixo (R$) — aceita conta, ex.: 3000-250', v: inpNum(S.d.base.valor) }], 'Salvar', async x => { await api('baseSet', { valor: parseNum(x.v) }); });
   if (a === 'media') return formSheet('Média das faturas', [{ id: 'v', l: 'Média (R$) — só informativo', v: inpNum(S.d.media), num: 1 }], 'Salvar', async x => { await api('mediaSet', { valor: x.v }); });
 });
+document.addEventListener('change', async ev => { if (ev.target && ev.target.id === 'basesel') { try { await api('baseSet', { tipo: ev.target.value }); toast('Base atualizada.'); reload(); } catch (e) { toast(e.message); } } });
 /* botões extras dentro das folhas (limpar/remover/excluir) */
 document.addEventListener('click', async ev => {
   const id = ev.target && ev.target.id; if (!id) return;
