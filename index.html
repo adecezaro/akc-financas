@@ -9,6 +9,8 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="apple-mobile-web-app-title" content="AKC Finanças">
 <link rel="manifest" href="manifest.json">
+<link rel="preconnect" href="https://script.google.com">
+<link rel="preconnect" href="https://script.googleusercontent.com">
 <link rel="apple-touch-icon" href="icon-192.png">
 <link rel="icon" href="icon-192.png">
 <title>AKC Finanças</title>
@@ -343,7 +345,7 @@ async function salvarL(btn) {
     if (L.tipo === 'Transferencia') { const a = splitCk(L.de), b = splitCk(L.para); dados = { tipo: 'Transferencia', valor, desc: L.desc, data: L.data, obs: L.obs, deBanco: a.banco, deConta: a.conta, paraBanco: b.banco, paraConta: b.conta }; }
     else { const c = splitCk(L.conta); if (!L.desc.trim()) throw new Error('Informe a descrição.'); dados = { tipo: L.tipo, valor, desc: L.desc, grupo: L.grupo, cat: L.cat, banco: c.banco, conta: c.conta, data: L.data, obs: L.obs, parcelas: parseInt(L.parcelas, 10) || 1 }; ls('ultConta', L.conta); }
     btn.disabled = true; btn.textContent = 'Salvando…';
-    if (L.id) await api('atualizar', { id: L.id, dados }); else await api('salvar', dados);
+    closeSheet(); toast('Salvando…'); const pr = L.id ? api('atualizar', { id: L.id, dados }) : api('salvar', dados); pr.then(() => { toast('Salvo.'); api('boot').then(b => { S.init = b.init; cset('init', b.init); }).catch(() => { }); if (S.tela !== 'login') reload(); }).catch(e => { toast('Não salvou: ' + e.message); }); return;
     closeSheet(); toast('Salvo.'); api('init').then(x => S.init = x).catch(() => { }); reload();
   } catch (e) { toast(e.message); btn.disabled = false; btn.textContent = 'Salvar'; }
 }
@@ -374,7 +376,7 @@ document.addEventListener('click', async ev => {
   if (a === 'entrar') {
     const pw = $('#pw').value, rem = $('#rem').checked; if (!pw) return;
     t.disabled = true; t.textContent = 'Entrando…'; S.token = pw;
-    try { await api('login'); S.init = await api('init'); if (!ls('bio') && !ls('biooff')) { try { await ativarBio(); } catch (e) { } } if (rem || ls('bio')) ls('tok', pw); else ls('tok', null); S.tela = 'inicio'; load(); }
+    try { await api('login'); { const b = await api('boot'); S.init = b.init; cset('init', b.init); cset('inicio{}', b.inicio); } if (!ls('bio') && !ls('biooff')) { try { await ativarBio(); } catch (e) { } } if (rem || ls('bio')) ls('tok', pw); else ls('tok', null); S.tela = 'inicio'; load(); }
     catch (e) { S.token = ''; if (S.tela === 'login') { const er = $('#lerr'); if (er) er.textContent = e.message; t.disabled = false; t.textContent = 'Entrar'; } }
     return;
   }
@@ -465,7 +467,7 @@ document.addEventListener('keydown', ev => { if (ev.key === 'Enter' && ev.target
   try { const c = document.createElement('canvas'); c.width = c.height = 180; const x = c.getContext('2d'); x.fillStyle = '#000'; x.fillRect(0, 0, 180, 180); x.strokeStyle = '#F5F5F5'; x.lineWidth = 5; x.beginPath(); x.arc(90, 90, 58, 0, 7); x.stroke(); x.fillStyle = '#F5F5F5'; x.font = 'bold 46px Arial'; x.textAlign = 'center'; x.fillText('R$', 90, 106); const l = document.createElement('link'); l.rel = 'apple-touch-icon'; l.href = c.toDataURL('image/png'); document.head.appendChild(l); } catch (e) { }
   applyTheme();
   if (!S.token) { S.tela = 'login'; return render(); }
-  if (ls('bio')) { S.tela = 'lock'; render(); prefetch(); tentaBio(); return; }
+  if (ls('bio')) { S.tela = 'lock'; render(); prefetch(); tentaBio(); setTimeout(tentaBio, 700); return; }
   await abrir();
 })();
 
@@ -473,9 +475,9 @@ const cget = k => { try { return JSON.parse(localStorage.getItem('akc_c_' + k));
 const cset = (k, v) => { try { localStorage.setItem('akc_c_' + k, JSON.stringify(v)); } catch (e) { } };
 const cclear = () => { try { Object.keys(localStorage).filter(k => k.indexOf('akc_c_') === 0).forEach(k => localStorage.removeItem(k)); } catch (e) { } };
 const hojeLocal = () => { const d = new Date(), p = n => String(n).padStart(2, '0'); return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate()); };
-function prefetch() { api('init').then(x => cset('init', x)).catch(() => { }); api('inicio').then(x => cset('inicio{}', x)).catch(() => { }); }
+function prefetch() { api('boot').then(b => { cset('init', b.init); cset('inicio{}', b.inicio); }).catch(() => { }); }
 async function abrir() {
-  try { const ci = cget('init'); if (ci) { ci.hoje = hojeLocal(); S.init = ci; S.tela = 'inicio'; load(); api('init').then(x => { S.init = x; cset('init', x); }).catch(() => { }); return; } S.init = await api('init'); cset('init', S.init); S.tela = 'inicio'; load(); }
+  try { const ci = cget('init'), cd = cget('inicio{}'); if (ci && cd) { ci.hoje = hojeLocal(); S.init = ci; S.tela = 'inicio'; S.d = cd; render(); api('boot').then(b => { S.init = b.init; cset('init', b.init); cset('inicio{}', b.inicio); if (S.tela === 'inicio') { S.d = b.inicio; render(); } }).catch(() => { }); return; } const b = await api('boot'); S.init = b.init; cset('init', b.init); cset('inicio{}', b.inicio); S.tela = 'inicio'; S.d = b.inicio; render(); }
   catch (e) { if (S.token) { $('#app').innerHTML = '<div class="loading">' + esc(e.message) + '<br><br><button class="btn sec" onclick="location.reload()">Tentar de novo</button></div>'; } }
 }
 const b64 = u => btoa(String.fromCharCode.apply(null, new Uint8Array(u))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
@@ -485,11 +487,21 @@ async function ativarBio() {
   const cred = await navigator.credentials.create({ publicKey: { challenge: crypto.getRandomValues(new Uint8Array(32)), rp: { name: 'AKC Finanças', id: location.hostname }, user: { id: crypto.getRandomValues(new Uint8Array(16)), name: 'akc', displayName: 'AKC Finanças' }, pubKeyCredParams: [{ type: 'public-key', alg: -7 }, { type: 'public-key', alg: -257 }], authenticatorSelection: { authenticatorAttachment: 'platform', userVerification: 'required' }, timeout: 60000 } });
   ls('bio', b64(cred.rawId)); ls('tok', S.token);
 }
+let bioBusy = false, bioArm = false;
 async function tentaBio() {
+  if (bioBusy || S.tela !== 'lock') return; bioBusy = true;
   try {
     await navigator.credentials.get({ publicKey: { challenge: crypto.getRandomValues(new Uint8Array(32)), allowCredentials: [{ type: 'public-key', id: unb64(ls('bio')) }], userVerification: 'required', timeout: 60000 } });
-    await abrir();
-  } catch (e) { toast('Não foi possível desbloquear. Toque em Desbloquear ou use a senha.'); }
+    bioBusy = false; await abrir();
+  } catch (e) {
+    bioBusy = false;
+    if (!bioArm) {
+      bioArm = true;
+      const re = ev => { if (S.tela === 'lock' && !(ev.target && ev.target.closest && ev.target.closest('[data-a=usarsenha]'))) tentaBio(); };
+      ['pointerdown', 'touchstart', 'keydown'].forEach(n => document.addEventListener(n, re, { passive: true }));
+      window.addEventListener('focus', () => { if (S.tela === 'lock') tentaBio(); });
+    }
+  }
 }
 let hiddenAt = 0;
 document.addEventListener('visibilitychange', () => {
@@ -511,7 +523,7 @@ async function delItem(r) {
   if (!await askConfirm(msg)) return;
   const ids = [r.id];
   if (r.tipo === 'Interno') { const par = S.itens.find(x => x.id !== r.id && x.tipo === 'Interno' && x.data === r.data && x.desc === r.desc && Math.abs(x.valor + r.valor) < 0.005); if (par) ids.push(par.id); }
-  try { await api('excluir', { ids }); closeSheet(); toast('Excluído.'); reload(); } catch (e) { toast(e.message); }
+  closeSheet(); toast('Excluindo…'); try { await api('excluir', { ids }); toast('Excluído.'); reload(); } catch (e) { toast(e.message); }
 }
 </script>
 </body>
