@@ -118,7 +118,7 @@ const API = 'https://script.google.com/macros/s/AKfycbzFPsnspOiyKDMIS2QAYxfZlCdh
 const LOGO = 'data:image/png;base64,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';
 const $ = s => document.querySelector(s);
 function ls(k, v) { try { if (v === undefined) return localStorage.getItem('akc_' + k); if (v === null) localStorage.removeItem('akc_' + k); else localStorage.setItem('akc_' + k, v); } catch (e) { return null; } }
-const S = { tela: 'inicio', sub: null, hide: ls('hide') === '1', tema: ls('tema') || 'dark', token: ls('tok') || '', init: null, d: null, ym: null, ymA: null, L: null, open: {}, busy: false };
+const S = { tela: 'inicio', sub: null, hide: ls('hide') === '1', tema: ls('tema') || 'dark', token: ls('tok') || (() => { try { return sessionStorage.getItem('akc_stok') || ''; } catch (e) { return ''; } })(), init: null, d: null, ym: null, ymA: null, L: null, open: {}, busy: false };
 const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const MES = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'];
 const DSEM = ['dom', 'seg', 'ter', 'qua', 'qui', 'sex', 'sáb'];
@@ -150,7 +150,7 @@ async function api(acao, dados) {
   if (!j.ok) { if (j.erro === 'senha') { sair(true); throw new Error('Senha incorreta.'); } throw new Error(j.erro || 'Erro.'); }
   return j.dados;
 }
-function sair(silencioso) { cclear(); S.token = ''; ls('tok', null); S.init = null; S.tela = 'login'; closeSheet(); render(); if (!silencioso) toast('Você saiu.'); }
+function sair(silencioso) { cclear(); try { sessionStorage.removeItem('akc_stok'); } catch (e) { } S.token = ''; ls('tok', null); S.init = null; S.tela = 'login'; closeSheet(); render(); if (!silencioso) toast('Você saiu.'); }
 
 /* ---------- ícones ---------- */
 const IC = {
@@ -175,7 +175,7 @@ async function load() {
   S.d = cget(key);
   render();
   try {
-    const n = await api(acao, dd); cset(key, n);
+    const n = await api(acao, S.fresh ? Object.assign({}, dd, { f: Date.now() }) : dd); S.fresh = false; cset(key, n);
     if (S.tela === T) { S.d = n; render(); }
   } catch (e) { if (S.tela !== 'login' && !S.d) { $('#app').innerHTML = '<div class="loading">' + esc(e.message) + '<br><br><button class="btn sec" data-a="reload">Tentar de novo</button></div>'; } }
 }
@@ -193,7 +193,7 @@ function render() {
   A.innerHTML = S.tela === 'inicio' ? vInicio() : S.tela === 'extrato' ? vExtrato() : S.tela === 'analises' ? vAnalises() : vMais();
 }
 const tb = (k, l) => '<button data-a="tab" data-v="' + k + '" class="' + (S.tela === k ? 'on' : '') + '">' + ico(k) + l + '</button>';
-const eye = () => '<button class="icobtn" data-a="eye" aria-label="Ocultar valores">' + ico(S.hide ? 'olhoX' : 'olho') + '</button>';
+const eye = () => '<span style="display:flex;gap:2px"><button class="icobtn" data-a="refresh" aria-label="Atualizar"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11a8 8 0 1 0-2.3 5.7M20 4v7h-7"/></svg></button><button class="icobtn" data-a="eye" aria-label="Ocultar valores">' + ico(S.hide ? 'olhoX' : 'olho') + '</button></span>';
 
 const vBrand = () => '<div class="brand"><img class="lg" src="' + LOGO + '" alt=""><span class="cif">$</span></div>';
 function vLock() { return '<div class="center" style="align-items:center;text-align:center">' + vBrand() + '<div class="sub">Toque para desbloquear com a biometria do celular.</div><button class="btn" data-a="bio">Desbloquear</button><button class="link" data-a="usarsenha">Usar a senha</button></div>'; }
@@ -383,11 +383,12 @@ document.addEventListener('click', async ev => {
   if (a === 'ovclose2') return closeSheet();
   if (a === 'tab') { S.sub = null; return go(v); }
   if (a === 'reload') return reload();
+  if (a === 'refresh') { S.fresh = true; toast('Atualizando…'); reload(); return; }
   if (a === 'eye') { S.hide = !S.hide; ls('hide', S.hide ? '1' : '0'); return render(); }
   if (a === 'entrar') {
     const pw = $('#pw').value, rem = $('#rem').checked; if (!pw) return;
     t.disabled = true; t.textContent = 'Entrando…'; S.token = pw;
-    try { await api('login'); { const b = await api('boot'); S.init = b.init; cset('init', b.init); cset('inicio{}', b.inicio); } if (!ls('bio') && !ls('biooff')) { try { await ativarBio(); } catch (e) { } } if (rem || ls('bio')) ls('tok', pw); else ls('tok', null); S.tela = 'inicio'; load(); }
+    try { await api('login'); { const b = await api('boot'); S.init = b.init; cset('init', b.init); cset('inicio{}', b.inicio); } if (!ls('bio') && !ls('biooff')) { try { await ativarBio(); } catch (e) { } } if (rem || ls('bio')) ls('tok', pw); else ls('tok', null); try { sessionStorage.setItem('akc_stok', pw); } catch (e) { } S.tela = 'inicio'; load(); }
     catch (e) { S.token = ''; if (S.tela === 'login') { const er = $('#lerr'); if (er) er.textContent = e.message; t.disabled = false; t.textContent = 'Entrar'; } }
     return;
   }
@@ -475,6 +476,11 @@ document.addEventListener('change', ev => {
 });
 document.addEventListener('keydown', ev => { if (ev.key === 'Enter' && ev.target.id === 'pw') { const b = document.querySelector('[data-a=entrar]'); if (b) b.click(); } });
 
+(function () {
+  let y0 = null;
+  document.addEventListener('touchstart', e => { y0 = (window.scrollY <= 0 && S.tela !== 'login' && S.tela !== 'lock' && !document.getElementById('ov').innerHTML) ? e.touches[0].clientY : null; }, { passive: true });
+  document.addEventListener('touchend', e => { if (y0 !== null && e.changedTouches[0].clientY - y0 > 110) { S.fresh = true; toast('Atualizando…'); reload(); } y0 = null; }, { passive: true });
+})();
 /* ---------- início ---------- */
 (async function () {
   if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => { });
