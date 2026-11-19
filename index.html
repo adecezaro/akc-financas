@@ -94,10 +94,10 @@ h2{font-size:13px;color:var(--mut);font-weight:600;margin:24px 0 8px}
 .chk .bx{width:24px;height:24px;border-radius:8px;border:2px solid var(--line2);flex:0 0 24px;display:flex;align-items:center;justify-content:center}
 .chk input:checked+.bx{background:var(--fg);border-color:var(--fg)}
 .chk input:checked+.bx::after{content:"";width:6px;height:11px;border:solid var(--bg);border-width:0 2.5px 2.5px 0;transform:rotate(45deg) translate(-1px,-1px)}
-.brand{display:flex;align-items:center;gap:12px}
-.brand .lg{height:92px;width:auto}
+.brand{position:relative;display:inline-block;line-height:0}
+.brand .lg{height:124px;width:auto;display:block}
 html.light .brand .lg{filter:invert(1)}
-.brand .cif{font-size:30px;font-weight:700;color:var(--mut);line-height:1}
+.brand .cif{position:absolute;right:-18px;bottom:0;font-size:46px;font-weight:800;color:var(--mut);line-height:1;text-shadow:0 0 8px var(--bg),0 0 3px var(--bg)}
 .xdel{width:38px;height:38px;flex:0 0 38px}
 </style>
 </head>
@@ -110,7 +110,7 @@ html.light .brand .lg{filter:invert(1)}
 <script>
 'use strict';
 const API = 'https://script.google.com/macros/s/AKfycbzFPsnspOiyKDMIS2QAYxfZlCdheqFNtHk3SVKMh9w7Iaxkpqqo43N4o-jwa5WM3oDh/exec';
-const LOGO = 'data:image/png;base64,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';
+const LOGO = 'data:image/png;base64,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';
 const $ = s => document.querySelector(s);
 function ls(k, v) { try { if (v === undefined) return localStorage.getItem('akc_' + k); if (v === null) localStorage.removeItem('akc_' + k); else localStorage.setItem('akc_' + k, v); } catch (e) { return null; } }
 const S = { tela: 'inicio', sub: null, hide: ls('hide') === '1', tema: ls('tema') || 'dark', token: ls('tok') || '', init: null, d: null, ym: null, ymA: null, L: null, open: {}, busy: false };
@@ -137,7 +137,7 @@ async function api(acao, dados) {
   if (!j.ok) { if (j.erro === 'senha') { sair(true); throw new Error('Senha incorreta.'); } throw new Error(j.erro || 'Erro.'); }
   return j.dados;
 }
-function sair(silencioso) { S.token = ''; ls('tok', null); S.init = null; S.tela = 'login'; closeSheet(); render(); if (!silencioso) toast('Você saiu.'); }
+function sair(silencioso) { cclear(); S.token = ''; ls('tok', null); S.init = null; S.tela = 'login'; closeSheet(); render(); if (!silencioso) toast('Você saiu.'); }
 
 /* ---------- ícones ---------- */
 const IC = {
@@ -152,14 +152,19 @@ const ico = n => '<svg viewBox="0 0 24 24">' + IC[n] + '</svg>';
 /* ---------- navegação ---------- */
 function go(tela, sub) { S.tela = tela; S.sub = sub || null; S.d = null; closeSheet(); load(); window.scrollTo(0, 0); }
 async function load() {
+  const T = S.tela; let acao = null, dd = null;
+  if (T === 'inicio') acao = 'inicio';
+  else if (T === 'extrato') { S.ym = S.ym || S.init.hoje.slice(0, 7); acao = 'extrato'; dd = { ym: S.ym }; }
+  else if (T === 'analises') { S.ymA = S.ymA || S.init.hoje.slice(0, 7); acao = 'analises'; dd = { ym: S.ymA }; }
+  else if (T === 'mais') { if (S.sub === 'resumo') acao = 'resumo'; else if (S.sub) acao = 'config'; }
+  if (!acao) { S.d = {}; render(); return; }
+  const key = acao + JSON.stringify(dd || {});
+  S.d = cget(key);
   render();
   try {
-    if (S.tela === 'inicio') S.d = await api('inicio');
-    else if (S.tela === 'extrato') { S.ym = S.ym || S.init.hoje.slice(0, 7); S.d = await api('extrato', { ym: S.ym }); }
-    else if (S.tela === 'analises') { S.ymA = S.ymA || S.init.hoje.slice(0, 7); S.d = await api('analises', { ym: S.ymA }); }
-    else if (S.tela === 'mais') { if (S.sub === 'resumo') S.d = await api('resumo'); else if (S.sub) S.d = await api('config'); else S.d = {}; }
-    render();
-  } catch (e) { if (S.tela !== 'login') { $('#app').innerHTML = '<div class="loading">' + esc(e.message) + '<br><br><button class="btn sec" data-a="reload">Tentar de novo</button></div>'; } }
+    const n = await api(acao, dd); cset(key, n);
+    if (S.tela === T) { S.d = n; render(); }
+  } catch (e) { if (S.tela !== 'login' && !S.d) { $('#app').innerHTML = '<div class="loading">' + esc(e.message) + '<br><br><button class="btn sec" data-a="reload">Tentar de novo</button></div>'; } }
 }
 const reload = () => { S.d = null; load(); };
 
@@ -369,7 +374,7 @@ document.addEventListener('click', async ev => {
   if (a === 'entrar') {
     const pw = $('#pw').value, rem = $('#rem').checked; if (!pw) return;
     t.disabled = true; t.textContent = 'Entrando…'; S.token = pw;
-    try { await api('login'); S.init = await api('init'); if (rem || ls('bio')) ls('tok', pw); else ls('tok', null); S.tela = 'inicio'; load(); }
+    try { await api('login'); S.init = await api('init'); if (!ls('bio') && !ls('biooff')) { try { await ativarBio(); } catch (e) { } } if (rem || ls('bio')) ls('tok', pw); else ls('tok', null); S.tela = 'inicio'; load(); }
     catch (e) { S.token = ''; if (S.tela === 'login') { const er = $('#lerr'); if (er) er.textContent = e.message; t.disabled = false; t.textContent = 'Entrar'; } }
     return;
   }
@@ -384,8 +389,8 @@ document.addEventListener('click', async ev => {
   if (a === 'usarsenha') { ls('bio', null); ls('tok', null); S.token = ''; S.tela = 'login'; return render(); }
   if (a === 'instalar') { if (S.inst) { S.inst.prompt(); S.inst = null; render(); } return; }
   if (a === 'biotog') {
-    if (ls('bio')) { ls('bio', null); toast('Biometria desativada.'); return render(); }
-    try { await ativarBio(); toast('Biometria ativada.'); } catch (e) { toast('Não foi possível ativar a biometria neste aparelho.'); } return render();
+    if (ls('bio')) { ls('bio', null); ls('biooff', '1'); toast('Biometria desativada.'); return render(); }
+    try { await ativarBio(); ls('biooff', null); toast('Biometria ativada.'); } catch (e) { toast('Não foi possível ativar a biometria neste aparelho.'); } return render();
   }
   if (a === 'editar') {
     const r = S.itens.find(x => x.id === +v); if (!r) return;
@@ -460,12 +465,17 @@ document.addEventListener('keydown', ev => { if (ev.key === 'Enter' && ev.target
   try { const c = document.createElement('canvas'); c.width = c.height = 180; const x = c.getContext('2d'); x.fillStyle = '#000'; x.fillRect(0, 0, 180, 180); x.strokeStyle = '#F5F5F5'; x.lineWidth = 5; x.beginPath(); x.arc(90, 90, 58, 0, 7); x.stroke(); x.fillStyle = '#F5F5F5'; x.font = 'bold 46px Arial'; x.textAlign = 'center'; x.fillText('R$', 90, 106); const l = document.createElement('link'); l.rel = 'apple-touch-icon'; l.href = c.toDataURL('image/png'); document.head.appendChild(l); } catch (e) { }
   applyTheme();
   if (!S.token) { S.tela = 'login'; return render(); }
-  if (ls('bio')) { S.tela = 'lock'; render(); tentaBio(); return; }
+  if (ls('bio')) { S.tela = 'lock'; render(); prefetch(); tentaBio(); return; }
   await abrir();
 })();
 
+const cget = k => { try { return JSON.parse(localStorage.getItem('akc_c_' + k)); } catch (e) { return null; } };
+const cset = (k, v) => { try { localStorage.setItem('akc_c_' + k, JSON.stringify(v)); } catch (e) { } };
+const cclear = () => { try { Object.keys(localStorage).filter(k => k.indexOf('akc_c_') === 0).forEach(k => localStorage.removeItem(k)); } catch (e) { } };
+const hojeLocal = () => { const d = new Date(), p = n => String(n).padStart(2, '0'); return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate()); };
+function prefetch() { api('init').then(x => cset('init', x)).catch(() => { }); api('inicio').then(x => cset('inicio{}', x)).catch(() => { }); }
 async function abrir() {
-  try { S.init = await api('init'); S.tela = 'inicio'; load(); }
+  try { const ci = cget('init'); if (ci) { ci.hoje = hojeLocal(); S.init = ci; S.tela = 'inicio'; load(); api('init').then(x => { S.init = x; cset('init', x); }).catch(() => { }); return; } S.init = await api('init'); cset('init', S.init); S.tela = 'inicio'; load(); }
   catch (e) { if (S.token) { $('#app').innerHTML = '<div class="loading">' + esc(e.message) + '<br><br><button class="btn sec" onclick="location.reload()">Tentar de novo</button></div>'; } }
 }
 const b64 = u => btoa(String.fromCharCode.apply(null, new Uint8Array(u))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
