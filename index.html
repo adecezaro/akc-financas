@@ -104,6 +104,7 @@ html.light .brand .lg{filter:invert(1)}
 div.row>button.row{flex:1 1 0;min-width:0;width:auto;padding-right:6px}
 .row .v{min-width:96px;text-align:right;flex:0 0 auto}
 .xdel{margin-right:-4px}
+html,body{overscroll-behavior-y:contain}
 </style>
 </head>
 <body>
@@ -476,6 +477,9 @@ document.addEventListener('change', ev => {
 });
 document.addEventListener('keydown', ev => { if (ev.key === 'Enter' && ev.target.id === 'pw') { const b = document.querySelector('[data-a=entrar]'); if (b) b.click(); } });
 
+const touchAct = () => { try { sessionStorage.setItem('akc_last', String(Date.now())); } catch (e) { } };
+const recent = () => { try { return Date.now() - Number(sessionStorage.getItem('akc_last') || 0) < 60000; } catch (e) { return false; } };
+['touchstart', 'click', 'keydown'].forEach(n => document.addEventListener(n, touchAct, { passive: true }));
 (function () {
   let y0 = null;
   document.addEventListener('touchstart', e => { y0 = (window.scrollY <= 0 && S.tela !== 'login' && S.tela !== 'lock' && !document.getElementById('ov').innerHTML) ? e.touches[0].clientY : null; }, { passive: true });
@@ -487,7 +491,7 @@ document.addEventListener('keydown', ev => { if (ev.key === 'Enter' && ev.target
   try { const c = document.createElement('canvas'); c.width = c.height = 180; const x = c.getContext('2d'); x.fillStyle = '#000'; x.fillRect(0, 0, 180, 180); x.strokeStyle = '#F5F5F5'; x.lineWidth = 5; x.beginPath(); x.arc(90, 90, 58, 0, 7); x.stroke(); x.fillStyle = '#F5F5F5'; x.font = 'bold 46px Arial'; x.textAlign = 'center'; x.fillText('R$', 90, 106); const l = document.createElement('link'); l.rel = 'apple-touch-icon'; l.href = c.toDataURL('image/png'); document.head.appendChild(l); } catch (e) { }
   applyTheme();
   if (!S.token) { S.tela = 'login'; return render(); }
-  if (ls('bio')) { S.tela = 'lock'; render(); prefetch(); tentaBio(); setTimeout(tentaBio, 700); return; }
+  if (ls('bio') && !recent()) { S.tela = 'lock'; render(); prefetch(); tentaBio(); setTimeout(tentaBio, 700); return; }
   await abrir();
 })();
 
@@ -497,6 +501,7 @@ const cclear = () => { try { Object.keys(localStorage).filter(k => k.indexOf('ak
 const hojeLocal = () => { const d = new Date(), p = n => String(n).padStart(2, '0'); return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate()); };
 function prefetch() { api('boot').then(b => { cset('init', b.init); cset('inicio{}', b.inicio); }).catch(() => { }); }
 async function abrir() {
+  touchAct();
   try { const ci = cget('init'), cd = cget('inicio{}'); if (ci && cd) { ci.hoje = hojeLocal(); S.init = ci; S.tela = 'inicio'; S.d = cd; render(); api('boot').then(b => { S.init = b.init; cset('init', b.init); cset('inicio{}', b.inicio); if (S.tela === 'inicio') { S.d = b.inicio; render(); } }).catch(() => { }); return; } const b = await api('boot'); S.init = b.init; cset('init', b.init); cset('inicio{}', b.inicio); S.tela = 'inicio'; S.d = b.inicio; render(); }
   catch (e) { if (S.token) { $('#app').innerHTML = '<div class="loading">' + esc(e.message) + '<br><br><button class="btn sec" onclick="location.reload()">Tentar de novo</button></div>'; } }
 }
